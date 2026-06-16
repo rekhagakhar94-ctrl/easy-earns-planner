@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { X, DollarSign, Hash, Moon, Vibrate, Fingerprint, History } from "lucide-react";
+import { X, DollarSign, Hash, Moon, Vibrate, History } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
-import { useApp, type Currency } from "@/lib/store";
+import { useApp, type Currency, type NumberFormat, NUMBER_FORMAT_OPTIONS } from "@/lib/store";
 
 export const Route = createFileRoute("/settings")({
   head: () => ({ meta: [{ title: "Settings — FinCalc Pro" }] }),
@@ -14,7 +14,8 @@ const CURRENCIES: { code: Currency; label: string }[] = [
 ];
 
 function Page() {
-  const { settings, setSettings, clearHistory } = useApp();
+  const { settings, setSettings, clearHistory, format } = useApp();
+  const activeFmt = NUMBER_FORMAT_OPTIONS.find((o) => o.value === settings.numberFormat) ?? NUMBER_FORMAT_OPTIONS[0];
   return (
     <AppShell>
       <header className="mb-6 flex items-start justify-between">
@@ -32,27 +33,33 @@ function Page() {
             onChange={(e) => setSettings({ currency: e.target.value as Currency })}
             className="rounded-lg bg-transparent text-sm font-semibold text-primary outline-none"
           >
-            {CURRENCIES.map((c) => <option key={c.code} value={c.code} className="bg-surface text-foreground">{c.label}</option>)}
+            {CURRENCIES.map((c) => <option key={c.code} value={c.code}>{c.label}</option>)}
           </select>
         </Row>
-        <Row icon={<Hash className="size-5" />} title="Number Format" sub="1,234,567.89">
-          <span className="text-muted-foreground">›</span>
+        <Row icon={<Hash className="size-5" />} title="Number Format" sub={`Preview: ${format(1234567.89)}`}>
+          <select
+            value={settings.numberFormat}
+            onChange={(e) => setSettings({ numberFormat: e.target.value as NumberFormat | "auto" })}
+            className="rounded-lg bg-transparent text-right text-sm font-semibold text-primary outline-none"
+            title={activeFmt.sample}
+          >
+            {NUMBER_FORMAT_OPTIONS.map((o) => (
+              <option key={o.value} value={o.value}>{o.label}</option>
+            ))}
+          </select>
         </Row>
       </Section>
 
       <Section title="Appearance">
-        <Row icon={<Moon className="size-5" />} title="Dark Mode" sub="Premium dark theme">
-          <Toggle on />
+        <Row icon={<Moon className="size-5" />} title="Dark Mode" sub="Switch between light and dark theme">
+          <Toggle on={settings.darkMode} onChange={(v) => setSettings({ darkMode: v })} />
         </Row>
         <Row icon={<Vibrate className="size-5" />} title="Tactile Feedback" sub="Vibrate on button press">
           <Toggle on={settings.tactile} onChange={(v) => setSettings({ tactile: v })} />
         </Row>
       </Section>
 
-      <Section title="Security & Data">
-        <Row icon={<Fingerprint className="size-5" />} title="Biometric Lock" sub="Secure your financial data">
-          <Toggle on={settings.biometric} onChange={(v) => setSettings({ biometric: v })} />
-        </Row>
+      <Section title="Data">
         <Row icon={<History className="size-5" />} title="Clear History" sub="Delete all past calculations">
           <button onClick={clearHistory} className="text-sm font-semibold text-destructive">Clear</button>
         </Row>

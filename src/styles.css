@@ -83,6 +83,30 @@
   --shadow-glow: 0 8px 32px -8px oklch(0.72 0.18 280 / 0.5);
 }
 
+:root.light {
+  color-scheme: light;
+  --background: oklch(0.99 0.003 250);
+  --foreground: oklch(0.18 0.02 265);
+  --surface: oklch(0.97 0.006 260);
+  --surface-2: oklch(0.93 0.01 260);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.18 0.02 265);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.18 0.02 265);
+  --primary: oklch(0.55 0.2 280);
+  --primary-foreground: oklch(0.99 0.003 250);
+  --primary-glow: oklch(0.7 0.18 285);
+  --secondary: oklch(0.92 0.015 265);
+  --secondary-foreground: oklch(0.18 0.02 265);
+  --muted: oklch(0.93 0.012 260);
+  --muted-foreground: oklch(0.42 0.025 260);
+  --accent: oklch(0.55 0.2 280);
+  --accent-foreground: oklch(0.99 0.003 250);
+  --border: oklch(0.88 0.012 260);
+  --input: oklch(0.92 0.012 260);
+  --shadow-card: 0 4px 20px -10px oklch(0.2 0.05 265 / 0.18);
+}
+
 @layer base {
   :root {
     color-scheme: dark;
@@ -100,7 +124,6 @@
     font-family: var(--font-display);
     letter-spacing: -0.02em;
   }
-  /* Dark native dropdowns */
   select option {
     background-color: var(--surface);
     color: var(--foreground);

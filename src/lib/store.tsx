@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 
 export type Currency = "USD" | "EUR" | "GBP" | "INR" | "JPY";
+export type NumberFormat = "en-US" | "de-DE" | "en-IN" | "fr-FR";
 
 const SYMBOLS: Record<Currency, string> = {
   USD: "$",
@@ -10,13 +11,21 @@ const SYMBOLS: Record<Currency, string> = {
   JPY: "¥",
 };
 
-const LOCALES: Record<Currency, string> = {
+const DEFAULT_LOCALE: Record<Currency, NumberFormat> = {
   USD: "en-US",
   EUR: "de-DE",
-  GBP: "en-GB",
+  GBP: "en-US",
   INR: "en-IN",
-  JPY: "ja-JP",
+  JPY: "en-US",
 };
+
+export const NUMBER_FORMAT_OPTIONS: { value: NumberFormat | "auto"; label: string; sample: string }[] = [
+  { value: "auto", label: "Auto (by currency)", sample: "1,234,567.89" },
+  { value: "en-US", label: "US / UK", sample: "1,234,567.89" },
+  { value: "de-DE", label: "European", sample: "1.234.567,89" },
+  { value: "fr-FR", label: "French", sample: "1 234 567,89" },
+  { value: "en-IN", label: "Indian", sample: "12,34,567.89" },
+];
 
 export interface HistoryEntry {
   id: string;
@@ -31,7 +40,8 @@ export interface HistoryEntry {
 interface Settings {
   currency: Currency;
   tactile: boolean;
-  biometric: boolean;
+  darkMode: boolean;
+  numberFormat: NumberFormat | "auto";
 }
 
 interface Ctx {
@@ -50,22 +60,37 @@ const AppCtx = createContext<Ctx | null>(null);
 const SETTINGS_KEY = "fincalc.settings";
 const HISTORY_KEY = "fincalc.history";
 
+const DEFAULTS: Settings = {
+  currency: "USD",
+  tactile: true,
+  darkMode: true,
+  numberFormat: "auto",
+};
+
 export function AppProvider({ children }: { children: ReactNode }) {
-  const [settings, setSettingsState] = useState<Settings>({
-    currency: "USD",
-    tactile: true,
-    biometric: false,
-  });
+  const [settings, setSettingsState] = useState<Settings>(DEFAULTS);
   const [history, setHistory] = useState<HistoryEntry[]>([]);
 
   useEffect(() => {
     try {
       const s = localStorage.getItem(SETTINGS_KEY);
-      if (s) setSettingsState({ ...{ currency: "USD", tactile: true, biometric: false }, ...JSON.parse(s) });
+      if (s) setSettingsState({ ...DEFAULTS, ...JSON.parse(s) });
       const h = localStorage.getItem(HISTORY_KEY);
       if (h) setHistory(JSON.parse(h));
     } catch {}
   }, []);
+
+  // Apply dark/light class to <html>
+  useEffect(() => {
+    const root = document.documentElement;
+    if (settings.darkMode) {
+      root.classList.remove("light");
+      root.classList.add("dark");
+    } else {
+      root.classList.remove("dark");
+      root.classList.add("light");
+    }
+  }, [settings.darkMode]);
 
   const setSettings = (patch: Partial<Settings>) => {
     setSettingsState((prev) => {
@@ -91,13 +116,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const clearHistory = useCallback(() => persistHistory([]), [history]);
   const removeHistory = useCallback((id: string) => persistHistory(history.filter((x) => x.id !== id)), [history]);
 
-  // Cache formatters: creating Intl.NumberFormat per call is expensive.
+  const activeLocale: string =
+    settings.numberFormat === "auto" ? DEFAULT_LOCALE[settings.currency] : settings.numberFormat;
+
   const formatters = useMemo(() => {
     const cache = new Map<number, Intl.NumberFormat>();
     return (decimals: number) => {
       let f = cache.get(decimals);
       if (!f) {
-        f = new Intl.NumberFormat(LOCALES[settings.currency], {
+        f = new Intl.NumberFormat(activeLocale, {
           minimumFractionDigits: decimals,
           maximumFractionDigits: decimals,
         });
@@ -105,7 +132,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       }
       return f;
     };
-  }, [settings.currency]);
+  }, [activeLocale]);
 
   const format = useCallback(
     (n: number, opts?: { decimals?: number }) => {

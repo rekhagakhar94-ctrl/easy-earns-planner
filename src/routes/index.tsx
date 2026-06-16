@@ -4,6 +4,7 @@ import {
   Receipt, Calculator, User,
 } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
+import { CurrencySwitcher } from "@/components/CurrencySwitcher";
 import { useApp } from "@/lib/store";
 
 export const Route = createFileRoute("/")({
@@ -56,12 +57,15 @@ function Home() {
           <p className="section-label">FINCALC</p>
           <h1 className="text-3xl font-bold tracking-tight">Premium Suite</h1>
         </div>
-        <Link
-          to="/settings"
-          className="inline-flex size-11 items-center justify-center rounded-full bg-surface text-foreground hover:bg-surface-2"
-        >
-          <User className="size-5" />
-        </Link>
+        <div className="flex items-center gap-2">
+          <CurrencySwitcher />
+          <Link
+            to="/settings"
+            className="inline-flex size-11 items-center justify-center rounded-full bg-surface text-foreground hover:bg-surface-2"
+          >
+            <User className="size-5" />
+          </Link>
+        </div>
       </header>
 
       <div className="hero-gradient relative mb-8 overflow-hidden rounded-3xl p-5 shadow-[var(--shadow-glow)]">

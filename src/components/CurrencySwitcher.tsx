@@ -27,10 +27,11 @@ export function CurrencySwitcher({ compact = false }: { compact?: boolean }) {
         value={settings.currency}
         onChange={(e) => setSettings({ currency: e.target.value as Currency })}
         className="absolute inset-0 cursor-pointer opacity-0"
+        style={{ colorScheme: "dark" }}
         aria-label="Currency"
       >
         {OPTIONS.map((o) => (
-          <option key={o.code} value={o.code}>
+          <option key={o.code} value={o.code} style={{ background: "#1a1d2e", color: "#fff" }}>
             {o.symbol} {o.label}
           </option>
         ))}

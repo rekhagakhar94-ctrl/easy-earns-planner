@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { Info } from "lucide-react";
 import { AppShell, PageHeader } from "@/components/AppShell";
-import { Card, Field, ResultPanel, SectionLabel, Slider } from "@/components/calc-ui";
+import { Card, Field, NumberPill, ResultPanel, SectionLabel, Slider } from "@/components/calc-ui";
 import { sip } from "@/lib/finance";
 import { useApp } from "@/lib/store";
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";

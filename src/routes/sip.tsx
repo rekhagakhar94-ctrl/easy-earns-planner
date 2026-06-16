@@ -29,20 +29,20 @@ function Page() {
       <PageHeader label="SIP Calculator" title="Wealth Projection" right={<Info className="mt-2 size-5 text-muted-foreground" />} />
 
       <Card>
-        <Field label="Monthly Investment" hint={format(monthly, { decimals: 0 })}>
-          <Slider value={monthly} min={50} max={10000} step={50} onChange={setMonthly} />
+        <Field label="Monthly Investment" hint={<NumberPill value={monthly} onChange={setMonthly} prefix={symbol} min={0} max={10000000} step={50} />}>
+          <Slider value={Math.min(monthly, 100000)} min={50} max={100000} step={50} onChange={setMonthly} />
         </Field>
       </Card>
       <div className="h-3" />
       <Card>
-        <Field label="Expected Return (p.a)" hint={<span className="text-primary">{rate}%</span>}>
+        <Field label="Expected Return (p.a)" hint={<NumberPill value={rate} onChange={setRate} suffix="%" min={0} max={50} step={0.1} />}>
           <Slider value={rate} min={1} max={30} step={0.5} onChange={setRate} />
         </Field>
       </Card>
       <div className="h-3" />
       <Card>
-        <Field label="Time Period" hint={<span className="text-primary">{years} Years</span>}>
-          <Slider value={years} min={1} max={40} onChange={setYears} />
+        <Field label="Time Period" hint={<NumberPill value={years} onChange={setYears} suffix="Yrs" min={1} max={60} />}>
+          <Slider value={Math.min(years, 40)} min={1} max={40} onChange={setYears} />
         </Field>
         <div className="mt-5 flex justify-between border-t border-border pt-4 text-sm">
           <span className="text-muted-foreground">Total Investment</span>

@@ -84,6 +84,9 @@
 }
 
 @layer base {
+  :root {
+    color-scheme: dark;
+  }
   * {
     border-color: var(--color-border);
   }
@@ -96,6 +99,11 @@
   h1, h2, h3, h4 {
     font-family: var(--font-display);
     letter-spacing: -0.02em;
+  }
+  /* Dark native dropdowns */
+  select option {
+    background-color: var(--surface);
+    color: var(--foreground);
   }
 }
 

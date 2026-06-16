@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { Info, Calendar } from "lucide-react";
 import { AppShell, PageHeader } from "@/components/AppShell";
-import { Card, Field, ResultPanel, SectionLabel, Slider } from "@/components/calc-ui";
+import { Card, Field, NumberPill, ResultPanel, SectionLabel, Slider } from "@/components/calc-ui";
 import { emi } from "@/lib/finance";
 import { useApp } from "@/lib/store";
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend } from "recharts";
@@ -13,7 +13,7 @@ export const Route = createFileRoute("/emi")({
 });
 
 function EmiPage() {
-  const { format, addHistory } = useApp();
+  const { format, addHistory, symbol } = useApp();
   const [amount, setAmount] = useState(100000);
   const [rate, setRate] = useState(8.5);
   const [years, setYears] = useState(5);
@@ -82,18 +82,18 @@ function EmiPage() {
         <SectionLabel>Loan Parameters</SectionLabel>
 
         <Card>
-          <Field label="Loan Amount" hint={format(amount, { decimals: 0 })}>
-            <Slider value={amount} min={1000} max={1000000} step={1000} onChange={setAmount} />
+          <Field label="Loan Amount" hint={<NumberPill value={amount} onChange={setAmount} prefix={symbol} min={0} max={100000000} step={1000} />}>
+            <Slider value={Math.min(amount, 1000000)} min={1000} max={1000000} step={1000} onChange={setAmount} />
           </Field>
         </Card>
         <Card>
-          <Field label="Interest Rate (p.a)" hint={`${rate}%`}>
-            <Slider value={rate} min={1} max={20} step={0.1} onChange={setRate} />
+          <Field label="Interest Rate (p.a)" hint={<NumberPill value={rate} onChange={setRate} suffix="%" min={0} max={50} step={0.1} />}>
+            <Slider value={Math.min(rate, 20)} min={1} max={20} step={0.1} onChange={setRate} />
           </Field>
         </Card>
         <Card>
-          <Field label="Loan Tenure" hint={`${years} Years`}>
-            <Slider value={years} min={1} max={30} onChange={setYears} />
+          <Field label="Loan Tenure" hint={<NumberPill value={years} onChange={setYears} suffix="Yrs" min={1} max={50} />}>
+            <Slider value={Math.min(years, 30)} min={1} max={30} onChange={setYears} />
           </Field>
         </Card>
 

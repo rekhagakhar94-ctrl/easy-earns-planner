@@ -34,6 +34,48 @@ export function TextInput({ className = "", ...rest }: InputHTMLAttributes<HTMLI
   );
 }
 
+export function NumberPill({
+  value,
+  onChange,
+  suffix,
+  prefix,
+  step = 1,
+  min,
+  max,
+}: {
+  value: number;
+  onChange: (n: number) => void;
+  suffix?: string;
+  prefix?: string;
+  step?: number;
+  min?: number;
+  max?: number;
+}) {
+  return (
+    <div className="inline-flex items-center gap-1 rounded-lg bg-surface-2/70 px-2 py-1 text-xs font-semibold text-primary focus-within:ring-2 focus-within:ring-primary/60">
+      {prefix && <span>{prefix}</span>}
+      <input
+        type="number"
+        inputMode="decimal"
+        value={value}
+        step={step}
+        min={min}
+        max={max}
+        onChange={(e) => {
+          const n = Number(e.target.value);
+          if (Number.isNaN(n)) return;
+          let v = n;
+          if (min !== undefined) v = Math.max(min, v);
+          if (max !== undefined) v = Math.min(max, v);
+          onChange(v);
+        }}
+        className="w-20 bg-transparent text-right tabular-nums outline-none"
+      />
+      {suffix && <span>{suffix}</span>}
+    </div>
+  );
+}
+
 export function Slider({
   value,
   min,

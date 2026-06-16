@@ -1,6 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { LayoutGrid, History, BarChart3, Settings as SettingsIcon } from "lucide-react";
 import type { ReactNode } from "react";
+import { CurrencySwitcher } from "./CurrencySwitcher";
 
 const NAV = [
   { to: "/", label: "Tools", icon: LayoutGrid },
@@ -71,7 +72,7 @@ export function PageHeader({
         <h1 className="text-2xl font-bold tracking-tight">{title}</h1>
         {subtitle && <p className="mt-0.5 text-xs text-muted-foreground">{subtitle}</p>}
       </div>
-      {right}
+      {right ?? <CurrencySwitcher compact />}
     </header>
   );
 }

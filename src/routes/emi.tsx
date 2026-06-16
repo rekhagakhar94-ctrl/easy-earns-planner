@@ -13,7 +13,7 @@ export const Route = createFileRoute("/emi")({
 });
 
 function EmiPage() {
-  const { format, addHistory } = useApp();
+  const { format, addHistory, symbol } = useApp();
   const [amount, setAmount] = useState(100000);
   const [rate, setRate] = useState(8.5);
   const [years, setYears] = useState(5);

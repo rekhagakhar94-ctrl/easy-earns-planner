@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 
 export type Currency = "USD" | "EUR" | "GBP" | "INR" | "JPY";
 
@@ -88,34 +88,49 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const clearHistory = () => persistHistory([]);
-  const removeHistory = (id: string) => persistHistory(history.filter((x) => x.id !== id));
+  const clearHistory = useCallback(() => persistHistory([]), [history]);
+  const removeHistory = useCallback((id: string) => persistHistory(history.filter((x) => x.id !== id)), [history]);
 
-  const format = (n: number, opts?: { decimals?: number }) => {
-    const decimals = opts?.decimals ?? 2;
-    const formatted = new Intl.NumberFormat(LOCALES[settings.currency], {
-      minimumFractionDigits: decimals,
-      maximumFractionDigits: decimals,
-    }).format(isFinite(n) ? n : 0);
-    return `${SYMBOLS[settings.currency]}${formatted}`;
-  };
+  // Cache formatters: creating Intl.NumberFormat per call is expensive.
+  const formatters = useMemo(() => {
+    const cache = new Map<number, Intl.NumberFormat>();
+    return (decimals: number) => {
+      let f = cache.get(decimals);
+      if (!f) {
+        f = new Intl.NumberFormat(LOCALES[settings.currency], {
+          minimumFractionDigits: decimals,
+          maximumFractionDigits: decimals,
+        });
+        cache.set(decimals, f);
+      }
+      return f;
+    };
+  }, [settings.currency]);
 
-  return (
-    <AppCtx.Provider
-      value={{
-        settings,
-        setSettings,
-        history,
-        addHistory,
-        clearHistory,
-        removeHistory,
-        format,
-        symbol: SYMBOLS[settings.currency],
-      }}
-    >
-      {children}
-    </AppCtx.Provider>
+  const format = useCallback(
+    (n: number, opts?: { decimals?: number }) => {
+      const decimals = opts?.decimals ?? 2;
+      const value = isFinite(n) ? n : 0;
+      return `${SYMBOLS[settings.currency]}${formatters(decimals).format(value)}`;
+    },
+    [formatters, settings.currency]
   );
+
+  const ctxValue = useMemo<Ctx>(
+    () => ({
+      settings,
+      setSettings,
+      history,
+      addHistory,
+      clearHistory,
+      removeHistory,
+      format,
+      symbol: SYMBOLS[settings.currency],
+    }),
+    [settings, history, format, clearHistory, removeHistory]
+  );
+
+  return <AppCtx.Provider value={ctxValue}>{children}</AppCtx.Provider>;
 }
 
 export function useApp() {

@@ -9,8 +9,74 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SipRouteImport } from './routes/sip'
+import { Route as SimpleRouteImport } from './routes/simple'
+import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as MathRouteImport } from './routes/math'
+import { Route as InsightsRouteImport } from './routes/insights'
+import { Route as HistoryRouteImport } from './routes/history'
+import { Route as GstRouteImport } from './routes/gst'
+import { Route as FdRouteImport } from './routes/fd'
+import { Route as EmiRouteImport } from './routes/emi'
+import { Route as CompoundRouteImport } from './routes/compound'
+import { Route as CompareRouteImport } from './routes/compare'
 import { Route as IndexRouteImport } from './routes/index'
 
+const SipRoute = SipRouteImport.update({
+  id: '/sip',
+  path: '/sip',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SimpleRoute = SimpleRouteImport.update({
+  id: '/simple',
+  path: '/simple',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MathRoute = MathRouteImport.update({
+  id: '/math',
+  path: '/math',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InsightsRoute = InsightsRouteImport.update({
+  id: '/insights',
+  path: '/insights',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HistoryRoute = HistoryRouteImport.update({
+  id: '/history',
+  path: '/history',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GstRoute = GstRouteImport.update({
+  id: '/gst',
+  path: '/gst',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FdRoute = FdRouteImport.update({
+  id: '/fd',
+  path: '/fd',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EmiRoute = EmiRouteImport.update({
+  id: '/emi',
+  path: '/emi',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CompoundRoute = CompoundRouteImport.update({
+  id: '/compound',
+  path: '/compound',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CompareRoute = CompareRouteImport.update({
+  id: '/compare',
+  path: '/compare',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -19,28 +85,186 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/compare': typeof CompareRoute
+  '/compound': typeof CompoundRoute
+  '/emi': typeof EmiRoute
+  '/fd': typeof FdRoute
+  '/gst': typeof GstRoute
+  '/history': typeof HistoryRoute
+  '/insights': typeof InsightsRoute
+  '/math': typeof MathRoute
+  '/settings': typeof SettingsRoute
+  '/simple': typeof SimpleRoute
+  '/sip': typeof SipRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/compare': typeof CompareRoute
+  '/compound': typeof CompoundRoute
+  '/emi': typeof EmiRoute
+  '/fd': typeof FdRoute
+  '/gst': typeof GstRoute
+  '/history': typeof HistoryRoute
+  '/insights': typeof InsightsRoute
+  '/math': typeof MathRoute
+  '/settings': typeof SettingsRoute
+  '/simple': typeof SimpleRoute
+  '/sip': typeof SipRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/compare': typeof CompareRoute
+  '/compound': typeof CompoundRoute
+  '/emi': typeof EmiRoute
+  '/fd': typeof FdRoute
+  '/gst': typeof GstRoute
+  '/history': typeof HistoryRoute
+  '/insights': typeof InsightsRoute
+  '/math': typeof MathRoute
+  '/settings': typeof SettingsRoute
+  '/simple': typeof SimpleRoute
+  '/sip': typeof SipRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/compare'
+    | '/compound'
+    | '/emi'
+    | '/fd'
+    | '/gst'
+    | '/history'
+    | '/insights'
+    | '/math'
+    | '/settings'
+    | '/simple'
+    | '/sip'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/compare'
+    | '/compound'
+    | '/emi'
+    | '/fd'
+    | '/gst'
+    | '/history'
+    | '/insights'
+    | '/math'
+    | '/settings'
+    | '/simple'
+    | '/sip'
+  id:
+    | '__root__'
+    | '/'
+    | '/compare'
+    | '/compound'
+    | '/emi'
+    | '/fd'
+    | '/gst'
+    | '/history'
+    | '/insights'
+    | '/math'
+    | '/settings'
+    | '/simple'
+    | '/sip'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CompareRoute: typeof CompareRoute
+  CompoundRoute: typeof CompoundRoute
+  EmiRoute: typeof EmiRoute
+  FdRoute: typeof FdRoute
+  GstRoute: typeof GstRoute
+  HistoryRoute: typeof HistoryRoute
+  InsightsRoute: typeof InsightsRoute
+  MathRoute: typeof MathRoute
+  SettingsRoute: typeof SettingsRoute
+  SimpleRoute: typeof SimpleRoute
+  SipRoute: typeof SipRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sip': {
+      id: '/sip'
+      path: '/sip'
+      fullPath: '/sip'
+      preLoaderRoute: typeof SipRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/simple': {
+      id: '/simple'
+      path: '/simple'
+      fullPath: '/simple'
+      preLoaderRoute: typeof SimpleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/math': {
+      id: '/math'
+      path: '/math'
+      fullPath: '/math'
+      preLoaderRoute: typeof MathRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/insights': {
+      id: '/insights'
+      path: '/insights'
+      fullPath: '/insights'
+      preLoaderRoute: typeof InsightsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/history': {
+      id: '/history'
+      path: '/history'
+      fullPath: '/history'
+      preLoaderRoute: typeof HistoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/gst': {
+      id: '/gst'
+      path: '/gst'
+      fullPath: '/gst'
+      preLoaderRoute: typeof GstRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/fd': {
+      id: '/fd'
+      path: '/fd'
+      fullPath: '/fd'
+      preLoaderRoute: typeof FdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/emi': {
+      id: '/emi'
+      path: '/emi'
+      fullPath: '/emi'
+      preLoaderRoute: typeof EmiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/compound': {
+      id: '/compound'
+      path: '/compound'
+      fullPath: '/compound'
+      preLoaderRoute: typeof CompoundRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/compare': {
+      id: '/compare'
+      path: '/compare'
+      fullPath: '/compare'
+      preLoaderRoute: typeof CompareRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -53,6 +277,17 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CompareRoute: CompareRoute,
+  CompoundRoute: CompoundRoute,
+  EmiRoute: EmiRoute,
+  FdRoute: FdRoute,
+  GstRoute: GstRoute,
+  HistoryRoute: HistoryRoute,
+  InsightsRoute: InsightsRoute,
+  MathRoute: MathRoute,
+  SettingsRoute: SettingsRoute,
+  SimpleRoute: SimpleRoute,
+  SipRoute: SipRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

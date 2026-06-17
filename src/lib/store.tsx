@@ -1,22 +1,33 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 
-export type Currency = "USD" | "EUR" | "GBP" | "INR" | "JPY";
+export type Currency =
+  | "USD" | "EUR" | "GBP" | "INR" | "JPY"
+  | "AUD" | "CAD" | "CHF" | "CNY" | "HKD"
+  | "SGD" | "NZD" | "AED" | "SAR" | "ZAR"
+  | "BRL" | "MXN" | "RUB" | "KRW" | "TRY"
+  | "SEK" | "NOK" | "DKK" | "PLN" | "THB"
+  | "IDR" | "MYR" | "PHP" | "VND" | "PKR"
+  | "BDT" | "LKR" | "NGN" | "EGP" | "ILS";
 export type NumberFormat = "en-US" | "de-DE" | "en-IN" | "fr-FR";
 
 const SYMBOLS: Record<Currency, string> = {
-  USD: "$",
-  EUR: "€",
-  GBP: "£",
-  INR: "₹",
-  JPY: "¥",
+  USD: "$", EUR: "€", GBP: "£", INR: "₹", JPY: "¥",
+  AUD: "A$", CAD: "C$", CHF: "Fr", CNY: "¥", HKD: "HK$",
+  SGD: "S$", NZD: "NZ$", AED: "د.إ", SAR: "﷼", ZAR: "R",
+  BRL: "R$", MXN: "Mex$", RUB: "₽", KRW: "₩", TRY: "₺",
+  SEK: "kr", NOK: "kr", DKK: "kr", PLN: "zł", THB: "฿",
+  IDR: "Rp", MYR: "RM", PHP: "₱", VND: "₫", PKR: "₨",
+  BDT: "৳", LKR: "Rs", NGN: "₦", EGP: "E£", ILS: "₪",
 };
 
 const DEFAULT_LOCALE: Record<Currency, NumberFormat> = {
-  USD: "en-US",
-  EUR: "de-DE",
-  GBP: "en-US",
-  INR: "en-IN",
-  JPY: "en-US",
+  USD: "en-US", EUR: "de-DE", GBP: "en-US", INR: "en-IN", JPY: "en-US",
+  AUD: "en-US", CAD: "en-US", CHF: "de-DE", CNY: "en-US", HKD: "en-US",
+  SGD: "en-US", NZD: "en-US", AED: "en-US", SAR: "en-US", ZAR: "en-US",
+  BRL: "de-DE", MXN: "en-US", RUB: "de-DE", KRW: "en-US", TRY: "de-DE",
+  SEK: "fr-FR", NOK: "fr-FR", DKK: "de-DE", PLN: "de-DE", THB: "en-US",
+  IDR: "de-DE", MYR: "en-US", PHP: "en-US", VND: "de-DE", PKR: "en-IN",
+  BDT: "en-IN", LKR: "en-IN", NGN: "en-US", EGP: "en-US", ILS: "en-US",
 };
 
 export const NUMBER_FORMAT_OPTIONS: { value: NumberFormat | "auto"; label: string; sample: string }[] = [

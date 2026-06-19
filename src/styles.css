@@ -185,3 +185,12 @@ input[type="range"].fc-range::-moz-range-thumb {
   border: none;
   cursor: pointer;
 }
+
+/* Hide number-input spinners for a cleaner mobile look */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+input[type="number"] { -moz-appearance: textfield; }
+
+/* When the on-screen keyboard is open, hide the bottom nav so inputs stay visible */
+body.kb-open .app-nav { display: none; }
+body.kb-open .app-main { padding-bottom: 1.5rem; }

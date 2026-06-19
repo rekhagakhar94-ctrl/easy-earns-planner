@@ -63,7 +63,7 @@ function Page() {
         <Card>
           <Field label="Investment Amount">
             <div className="flex gap-2">
-              <TextInput type="number" inputMode="decimal" placeholder="0" value={p === "" ? "" : p} onChange={setNum(setP)} />
+              <TextInput type="number" inputMode="decimal" value={p === "" ? "" : p} onChange={setNum(setP)} />
               <span className="inline-flex items-center rounded-xl bg-surface-2/60 px-3 text-xs font-semibold">{settings.currency}</span>
             </div>
           </Field>
@@ -71,7 +71,7 @@ function Page() {
         <Card>
           <Field label="Interest Rate (P.A)">
             <div className="flex gap-2">
-              <TextInput type="number" inputMode="decimal" step="0.1" placeholder="0" value={r === "" ? "" : r} onChange={setNum(setR)} />
+              <TextInput type="number" inputMode="decimal" step="0.1" value={r === "" ? "" : r} onChange={setNum(setR)} />
               <span className="inline-flex items-center rounded-xl bg-surface-2/60 px-3 text-xs font-semibold">%</span>
             </div>
           </Field>
@@ -79,7 +79,7 @@ function Page() {
         <Card>
           <Field label="Tenure">
             <div className="flex gap-2">
-              <TextInput type="number" inputMode="decimal" placeholder="0" value={t === "" ? "" : t} onChange={setNum(setT)} />
+              <TextInput type="number" inputMode="decimal" value={t === "" ? "" : t} onChange={setNum(setT)} />
               <span className="inline-flex items-center rounded-xl bg-surface-2/60 px-3 text-xs font-semibold">Yrs</span>
             </div>
           </Field>

@@ -36,9 +36,9 @@ function Page() {
     <AppShell>
       <PageHeader title="Simple Interest" subtitle="Direct interest" />
       <div className="space-y-5">
-        <Card><Field label="Principal"><TextInput type="number" inputMode="decimal" placeholder="0" value={p === "" ? "" : p} onChange={setNum(setP)} /></Field></Card>
-        <Card><Field label="Rate (p.a %)"><TextInput type="number" inputMode="decimal" step="0.1" placeholder="0" value={r === "" ? "" : r} onChange={setNum(setR)} /></Field></Card>
-        <Card><Field label="Time (Years)"><TextInput type="number" inputMode="decimal" placeholder="0" value={t === "" ? "" : t} onChange={setNum(setT)} /></Field></Card>
+        <Card><Field label="Principal"><TextInput type="number" inputMode="decimal" value={p === "" ? "" : p} onChange={setNum(setP)} /></Field></Card>
+        <Card><Field label="Rate (p.a %)"><TextInput type="number" inputMode="decimal" step="0.1" value={r === "" ? "" : r} onChange={setNum(setR)} /></Field></Card>
+        <Card><Field label="Time (Years)"><TextInput type="number" inputMode="decimal" value={t === "" ? "" : t} onChange={setNum(setT)} /></Field></Card>
 
         <CalculateButton
           disabled={!ready}

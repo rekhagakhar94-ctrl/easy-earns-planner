@@ -50,7 +50,7 @@ function Page() {
       <div className="mt-6 space-y-4">
         <SectionLabel>Transaction Details</SectionLabel>
         <Field label={mode === "add" ? "Net Amount" : "Total (incl GST)"}>
-          <TextInput type="number" inputMode="decimal" placeholder="0" value={amount === "" ? "" : amount} onChange={setNum(setAmount)} />
+          <TextInput type="number" inputMode="decimal" value={amount === "" ? "" : amount} onChange={setNum(setAmount)} />
         </Field>
 
         <p className="pt-2 text-center text-xs text-muted-foreground">Select GST Slab</p>

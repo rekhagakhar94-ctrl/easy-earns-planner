@@ -107,13 +107,13 @@ function OptionCard({ letter, opt, setOpt }: { letter: string; opt: Opt; setOpt:
     <Card className="space-y-3">
       <p className="text-center text-sm font-bold text-primary">OPTION {letter}</p>
       <Field label="Loan Amount">
-        <TextInput type="number" inputMode="decimal" placeholder="0" value={opt.amount === "" ? "" : opt.amount} onChange={setNum((v) => setOpt({ ...opt, amount: v }))} />
+        <TextInput type="number" inputMode="decimal" value={opt.amount === "" ? "" : opt.amount} onChange={setNum((v) => setOpt({ ...opt, amount: v }))} />
       </Field>
       <Field label="Interest Rate (%)">
-        <TextInput type="number" inputMode="decimal" step="0.1" placeholder="0" value={opt.rate === "" ? "" : opt.rate} onChange={setNum((v) => setOpt({ ...opt, rate: v }))} />
+        <TextInput type="number" inputMode="decimal" step="0.1" value={opt.rate === "" ? "" : opt.rate} onChange={setNum((v) => setOpt({ ...opt, rate: v }))} />
       </Field>
       <Field label="Tenure (Years)">
-        <TextInput type="number" inputMode="decimal" placeholder="0" value={opt.years === "" ? "" : opt.years} onChange={setNum((v) => setOpt({ ...opt, years: v }))} />
+        <TextInput type="number" inputMode="decimal" value={opt.years === "" ? "" : opt.years} onChange={setNum((v) => setOpt({ ...opt, years: v }))} />
       </Field>
     </Card>
   );

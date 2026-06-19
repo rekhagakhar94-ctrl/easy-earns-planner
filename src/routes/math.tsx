@@ -56,8 +56,8 @@ function Page() {
           <h2 className="text-sm font-semibold">Percentage Change</h2>
         </div>
         <div className="grid grid-cols-2 gap-3">
-          <Field label="Initial Value"><TextInput type="number" inputMode="decimal" placeholder="0" value={pcA === "" ? "" : pcA} onChange={setNum(setPcA)} /></Field>
-          <Field label="Final Value"><TextInput type="number" inputMode="decimal" placeholder="0" value={pcB === "" ? "" : pcB} onChange={setNum(setPcB)} /></Field>
+          <Field label="Initial Value"><TextInput type="number" inputMode="decimal" value={pcA === "" ? "" : pcA} onChange={setNum(setPcA)} /></Field>
+          <Field label="Final Value"><TextInput type="number" inputMode="decimal" value={pcB === "" ? "" : pcB} onChange={setNum(setPcB)} /></Field>
         </div>
         <div className="mt-4">
           <CalculateButton disabled={!readyChg} onClick={() => setShownChg(true)} />
@@ -80,8 +80,8 @@ function Page() {
           <h2 className="text-sm font-semibold">Value of %</h2>
         </div>
         <div className="grid grid-cols-2 gap-3">
-          <Field label="Percentage"><TextInput type="number" inputMode="decimal" placeholder="0" value={pct === "" ? "" : pct} onChange={setNum(setPct)} /></Field>
-          <Field label="Total Amount"><TextInput type="number" inputMode="decimal" placeholder="0" value={tot === "" ? "" : tot} onChange={setNum(setTot)} /></Field>
+          <Field label="Percentage"><TextInput type="number" inputMode="decimal" value={pct === "" ? "" : pct} onChange={setNum(setPct)} /></Field>
+          <Field label="Total Amount"><TextInput type="number" inputMode="decimal" value={tot === "" ? "" : tot} onChange={setNum(setTot)} /></Field>
         </div>
         <div className="mt-4">
           <CalculateButton disabled={!readyVof} onClick={() => setShownVof(true)} />
@@ -103,8 +103,8 @@ function Page() {
           <h2 className="text-sm font-semibold">Margin Calculator</h2>
         </div>
         <div className="grid grid-cols-2 gap-3">
-          <Field label="Cost Price"><TextInput type="number" inputMode="decimal" placeholder="0" value={cost === "" ? "" : cost} onChange={setNum(setCost)} /></Field>
-          <Field label="Selling Price"><TextInput type="number" inputMode="decimal" placeholder="0" value={sell === "" ? "" : sell} onChange={setNum(setSell)} /></Field>
+          <Field label="Cost Price"><TextInput type="number" inputMode="decimal" value={cost === "" ? "" : cost} onChange={setNum(setCost)} /></Field>
+          <Field label="Selling Price"><TextInput type="number" inputMode="decimal" value={sell === "" ? "" : sell} onChange={setNum(setSell)} /></Field>
         </div>
         <div className="mt-4">
           <CalculateButton disabled={!readyM} onClick={() => setShownM(true)} />

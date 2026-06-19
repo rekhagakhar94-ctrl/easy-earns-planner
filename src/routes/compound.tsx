@@ -53,18 +53,18 @@ function Page() {
       <div className="space-y-5">
         <Card>
           <Field label="Principal Amount" hint={p !== "" ? format(p, { decimals: 0 }) : ""}>
-            <TextInput type="number" inputMode="decimal" placeholder="0" value={p === "" ? "" : p} onChange={setNum(setP)} />
+            <TextInput type="number" inputMode="decimal" value={p === "" ? "" : p} onChange={setNum(setP)} />
           </Field>
         </Card>
         <Card>
           <Field label="Interest Rate (p.a %)" hint={r !== "" ? `${r}%` : ""}>
-            <TextInput type="number" inputMode="decimal" step="0.1" placeholder="0" value={r === "" ? "" : r} onChange={setNum(setR)} />
+            <TextInput type="number" inputMode="decimal" step="0.1" value={r === "" ? "" : r} onChange={setNum(setR)} />
           </Field>
         </Card>
         <Card>
           <Field label="Period" hint={t !== "" ? `${t} Years` : ""}>
             <div className="flex gap-3">
-              <TextInput type="number" inputMode="decimal" placeholder="0" value={t === "" ? "" : t} onChange={setNum(setT)} />
+              <TextInput type="number" inputMode="decimal" value={t === "" ? "" : t} onChange={setNum(setT)} />
               <select
                 value={freq}
                 onChange={(e) => setFreq(Number(e.target.value))}
@@ -77,7 +77,7 @@ function Page() {
         </Card>
         <Card>
           <Field label="Monthly Addition (optional)" hint={add !== "" ? `${symbol}${add}` : ""}>
-            <TextInput type="number" inputMode="decimal" placeholder="0" value={add === "" ? "" : add} onChange={setNum(setAdd)} />
+            <TextInput type="number" inputMode="decimal" value={add === "" ? "" : add} onChange={setNum(setAdd)} />
           </Field>
         </Card>
 

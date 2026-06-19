@@ -1,6 +1,6 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { LayoutGrid, History, BarChart3, Settings as SettingsIcon } from "lucide-react";
-import type { ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 import { CurrencySwitcher } from "./CurrencySwitcher";
 
 const NAV = [
@@ -10,13 +10,45 @@ const NAV = [
   { to: "/settings", label: "Settings", icon: SettingsIcon },
 ] as const;
 
+function useKeyboardAwareNav() {
+  useEffect(() => {
+    const isField = (el: Element | null) =>
+      !!el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.tagName === "SELECT");
+    const onFocusIn = (e: FocusEvent) => {
+      if (isField(e.target as Element)) document.body.classList.add("kb-open");
+    };
+    const onFocusOut = () => {
+      setTimeout(() => {
+        if (!isField(document.activeElement)) document.body.classList.remove("kb-open");
+      }, 120);
+    };
+    document.addEventListener("focusin", onFocusIn);
+    document.addEventListener("focusout", onFocusOut);
+
+    const vv = window.visualViewport;
+    const onResize = () => {
+      const kbOpen = vv ? window.innerHeight - vv.height > 150 : false;
+      document.body.classList.toggle("kb-open", kbOpen && isField(document.activeElement));
+    };
+    vv?.addEventListener("resize", onResize);
+
+    return () => {
+      document.removeEventListener("focusin", onFocusIn);
+      document.removeEventListener("focusout", onFocusOut);
+      vv?.removeEventListener("resize", onResize);
+      document.body.classList.remove("kb-open");
+    };
+  }, []);
+}
+
 export function AppShell({ children }: { children: ReactNode }) {
   const path = useRouterState({ select: (s) => s.location.pathname });
+  useKeyboardAwareNav();
   return (
     <div className="min-h-screen bg-background">
       <div className="mx-auto flex min-h-screen max-w-md flex-col">
-        <main className="flex-1 px-5 pb-28 pt-6">{children}</main>
-        <nav className="fixed inset-x-0 bottom-0 z-40 mx-auto max-w-md px-4 pb-4">
+        <main className="app-main flex-1 px-5 pb-28 pt-6">{children}</main>
+        <nav className="app-nav fixed inset-x-0 bottom-0 z-40 mx-auto max-w-md px-4 pb-4">
           <div className="glass-card flex items-center justify-around px-2 py-2 backdrop-blur">
             {NAV.map((n) => {
               const active = n.to === "/" ? path === "/" : path.startsWith(n.to);

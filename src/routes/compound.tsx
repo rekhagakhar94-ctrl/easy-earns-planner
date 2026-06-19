@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { TrendingUp } from "lucide-react";
 import { AppShell, PageHeader } from "@/components/AppShell";
-import { Card, Field, TextInput } from "@/components/calc-ui";
+import { CalculateButton, Card, EmptyHint, Field, TextInput, allNum, numOr, type N } from "@/components/calc-ui";
 import { compoundInterest } from "@/lib/finance";
 import { useApp } from "@/lib/store";
 
@@ -19,15 +19,32 @@ const FREQ = [
   { label: "Daily", value: 365 },
 ];
 
+function setNum(setter: (v: N) => void) {
+  return (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value;
+    if (raw === "") return setter("");
+    const n = Number(raw);
+    if (!Number.isNaN(n)) setter(n);
+  };
+}
+
 function Page() {
   const { format, addHistory, symbol } = useApp();
-  const [p, setP] = useState(50000);
-  const [r, setR] = useState(8.5);
-  const [t, setT] = useState(10);
+  const [p, setP] = useState<N>("");
+  const [r, setR] = useState<N>("");
+  const [t, setT] = useState<N>("");
   const [freq, setFreq] = useState(1);
-  const [add, setAdd] = useState(500);
+  const [add, setAdd] = useState<N>("");
+  const [shown, setShown] = useState(false);
 
-  const result = useMemo(() => compoundInterest(p, r, t, freq, add), [p, r, t, freq, add]);
+  useEffect(() => { setShown(false); }, [p, r, t, freq, add]);
+  const ready = allNum(p, r, t); // monthly addition optional
+
+  const result = useMemo(
+    () => (ready ? compoundInterest(numOr(p), numOr(r), numOr(t), freq, numOr(add)) : null),
+    [ready, p, r, t, freq, add],
+  );
+  const calculated = shown && result !== null;
 
   return (
     <AppShell>
@@ -35,19 +52,19 @@ function Page() {
 
       <div className="space-y-5">
         <Card>
-          <Field label="Principal Amount" hint={format(p, { decimals: 0 })}>
-            <TextInput type="number" value={p} onChange={(e) => setP(Number(e.target.value) || 0)} />
+          <Field label="Principal Amount" hint={p !== "" ? format(p, { decimals: 0 }) : ""}>
+            <TextInput type="number" inputMode="decimal" value={p === "" ? "" : p} onChange={setNum(setP)} />
           </Field>
         </Card>
         <Card>
-          <Field label="Interest Rate (p.a %)" hint={`${r}%`}>
-            <TextInput type="number" step="0.1" value={r} onChange={(e) => setR(Number(e.target.value) || 0)} />
+          <Field label="Interest Rate (p.a %)" hint={r !== "" ? `${r}%` : ""}>
+            <TextInput type="number" inputMode="decimal" step="0.1" value={r === "" ? "" : r} onChange={setNum(setR)} />
           </Field>
         </Card>
         <Card>
-          <Field label="Period" hint={`${t} Years`}>
+          <Field label="Period" hint={t !== "" ? `${t} Years` : ""}>
             <div className="flex gap-3">
-              <TextInput type="number" value={t} onChange={(e) => setT(Number(e.target.value) || 0)} />
+              <TextInput type="number" inputMode="decimal" value={t === "" ? "" : t} onChange={setNum(setT)} />
               <select
                 value={freq}
                 onChange={(e) => setFreq(Number(e.target.value))}
@@ -59,33 +76,40 @@ function Page() {
           </Field>
         </Card>
         <Card>
-          <Field label="Monthly Addition" hint={`${symbol}${add}`}>
-            <TextInput type="number" value={add} onChange={(e) => setAdd(Number(e.target.value) || 0)} />
+          <Field label="Monthly Addition (optional)" hint={add !== "" ? `${symbol}${add}` : ""}>
+            <TextInput type="number" inputMode="decimal" value={add === "" ? "" : add} onChange={setNum(setAdd)} />
           </Field>
         </Card>
 
-        <button
-          onClick={() =>
+        <CalculateButton
+          disabled={!ready}
+          onClick={() => {
+            setShown(true);
+            if (!ready || !result) return;
             addHistory({
               type: "compound",
               title: "Compound Interest",
-              summary: `Principal: ${format(p, { decimals: 0 })} • ${r}% • ${t}yrs`,
+              summary: `Principal: ${format(numOr(p), { decimals: 0 })} • ${numOr(r)}% • ${numOr(t)}yrs`,
               value: result.total,
-            })
-          }
-          className="primary-gradient flex w-full items-center justify-center gap-2 rounded-2xl py-4 text-sm font-semibold text-primary-foreground shadow-[var(--shadow-glow)]"
-        >
-          <TrendingUp className="size-4" /> Calculate Growth
-        </button>
+            });
+          }}
+          label="Calculate Growth"
+        />
 
-        <Card className="border-primary/40">
-          <p className="text-center text-sm text-muted-foreground">Estimated Total Value</p>
-          <p className="num-display mt-1 text-center text-4xl text-primary">{format(result.total)}</p>
-          <div className="mt-5 space-y-3 border-t border-border pt-4 text-sm">
-            <div className="flex justify-between"><span className="text-muted-foreground">Total Principal</span><span className="font-semibold">{format(result.totalPrincipal)}</span></div>
-            <div className="flex justify-between"><span className="text-muted-foreground">Total Interest</span><span className="font-semibold">{format(result.totalInterest)}</span></div>
-          </div>
-        </Card>
+        {!calculated ? (
+          <EmptyHint>{ready ? "Tap Calculate Growth." : "Enter principal, rate and period, then tap Calculate."}</EmptyHint>
+        ) : (
+          <Card className="border-primary/40">
+            <p className="text-center text-sm text-muted-foreground inline-flex items-center justify-center gap-2 w-full">
+              <TrendingUp className="size-4" /> Estimated Total Value
+            </p>
+            <p className="num-display mt-1 text-center text-4xl text-primary">{format(result!.total)}</p>
+            <div className="mt-5 space-y-3 border-t border-border pt-4 text-sm">
+              <div className="flex justify-between"><span className="text-muted-foreground">Total Principal</span><span className="font-semibold">{format(result!.totalPrincipal)}</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">Total Interest</span><span className="font-semibold">{format(result!.totalInterest)}</span></div>
+            </div>
+          </Card>
+        )}
       </div>
     </AppShell>
   );

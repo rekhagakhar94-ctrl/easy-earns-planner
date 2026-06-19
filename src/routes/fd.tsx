@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { RotateCcw } from "lucide-react";
 import { AppShell, PageHeader } from "@/components/AppShell";
-import { Card, Field, TextInput } from "@/components/calc-ui";
+import { CalculateButton, Card, EmptyHint, Field, TextInput, allNum, numOr, type N } from "@/components/calc-ui";
 import { fdMaturity } from "@/lib/finance";
 import { useApp } from "@/lib/store";
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
@@ -19,32 +19,51 @@ const FREQS = [
   { label: "Annually", value: 1 },
 ];
 
+function setNum(setter: (v: N) => void) {
+  return (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value;
+    if (raw === "") return setter("");
+    const n = Number(raw);
+    if (!Number.isNaN(n)) setter(n);
+  };
+}
+
 function Page() {
   const { format, addHistory, settings } = useApp();
-  const [p, setP] = useState(50000);
-  const [r, setR] = useState(6.5);
-  const [t, setT] = useState(5);
+  const [p, setP] = useState<N>("");
+  const [r, setR] = useState<N>("");
+  const [t, setT] = useState<N>("");
   const [freq, setFreq] = useState(12);
-  const result = useMemo(() => fdMaturity(p, r, t, freq), [p, r, t, freq]);
+  const [shown, setShown] = useState(false);
 
-  const data = [
-    { name: "Deposit", value: p, color: "var(--primary)" },
-    { name: "Interest", value: result.interest, color: "var(--warning)" },
-  ];
+  useEffect(() => { setShown(false); }, [p, r, t, freq]);
+  const ready = allNum(p, r, t);
 
-  const reset = () => { setP(50000); setR(6.5); setT(5); setFreq(12); };
+  const result = useMemo(
+    () => (ready ? fdMaturity(numOr(p), numOr(r), numOr(t), freq) : null),
+    [ready, p, r, t, freq],
+  );
+  const calculated = shown && result !== null;
+  const data = calculated
+    ? [
+        { name: "Deposit", value: numOr(p), color: "var(--primary)" },
+        { name: "Interest", value: result!.interest, color: "var(--warning)" },
+      ]
+    : [];
+
+  const reset = () => { setP(""); setR(""); setT(""); setFreq(12); setShown(false); };
 
   return (
     <AppShell>
       <PageHeader title="FD Calculator" subtitle="Fixed Deposit & Savings" right={
-        <button onClick={reset} className="mt-2 text-muted-foreground hover:text-foreground"><RotateCcw className="size-5" /></button>
+        <button onClick={reset} aria-label="Reset" className="mt-2 text-muted-foreground hover:text-foreground"><RotateCcw className="size-5" /></button>
       } />
 
       <div className="space-y-4">
         <Card>
           <Field label="Investment Amount">
             <div className="flex gap-2">
-              <TextInput type="number" value={p} onChange={(e) => setP(Number(e.target.value) || 0)} />
+              <TextInput type="number" inputMode="decimal" value={p === "" ? "" : p} onChange={setNum(setP)} />
               <span className="inline-flex items-center rounded-xl bg-surface-2/60 px-3 text-xs font-semibold">{settings.currency}</span>
             </div>
           </Field>
@@ -52,7 +71,7 @@ function Page() {
         <Card>
           <Field label="Interest Rate (P.A)">
             <div className="flex gap-2">
-              <TextInput type="number" step="0.1" value={r} onChange={(e) => setR(Number(e.target.value) || 0)} />
+              <TextInput type="number" inputMode="decimal" step="0.1" value={r === "" ? "" : r} onChange={setNum(setR)} />
               <span className="inline-flex items-center rounded-xl bg-surface-2/60 px-3 text-xs font-semibold">%</span>
             </div>
           </Field>
@@ -60,7 +79,7 @@ function Page() {
         <Card>
           <Field label="Tenure">
             <div className="flex gap-2">
-              <TextInput type="number" value={t} onChange={(e) => setT(Number(e.target.value) || 0)} />
+              <TextInput type="number" inputMode="decimal" value={t === "" ? "" : t} onChange={setNum(setT)} />
               <span className="inline-flex items-center rounded-xl bg-surface-2/60 px-3 text-xs font-semibold">Yrs</span>
             </div>
           </Field>
@@ -74,32 +93,47 @@ function Page() {
           </Field>
         </Card>
 
-        <div className="primary-gradient rounded-2xl p-6 text-center text-primary-foreground shadow-[var(--shadow-glow)]">
-          <p className="text-xs font-semibold uppercase tracking-wider opacity-80">Maturity Amount</p>
-          <p className="num-display mt-2 text-4xl">{format(result.total)}</p>
-          <div className="mt-4 grid grid-cols-2 gap-4 border-t border-white/20 pt-3 text-left">
-            <div><p className="text-xs opacity-75">Total Deposit</p><p className="num-display text-lg">{format(p)}</p></div>
-            <div><p className="text-xs opacity-75">Interest Earned</p><p className="num-display text-lg">{format(result.interest)}</p></div>
-          </div>
-        </div>
+        <CalculateButton
+          disabled={!ready}
+          onClick={() => {
+            setShown(true);
+            if (!ready || !result) return;
+            addHistory({
+              type: "fd",
+              title: "FD Maturity",
+              summary: `Deposit: ${format(numOr(p), { decimals: 0 })} • ${numOr(r)}% • ${numOr(t)}yr`,
+              value: result.total,
+            });
+          }}
+        />
 
-        <h2 className="pt-2 text-base font-semibold">Growth Analysis</h2>
-        <Card>
-          <div className="h-48">
-            <ResponsiveContainer>
-              <PieChart>
-                <Pie data={data} dataKey="value" innerRadius={48} outerRadius={78} stroke="none">
-                  {data.map((d) => <Cell key={d.name} fill={d.color} />)}
-                </Pie>
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
+        {!calculated ? (
+          <EmptyHint>{ready ? "Tap Calculate to see your maturity amount." : "Fill all fields, then tap Calculate."}</EmptyHint>
+        ) : (
+          <>
+            <div className="primary-gradient rounded-2xl p-6 text-center text-primary-foreground shadow-[var(--shadow-glow)]">
+              <p className="text-xs font-semibold uppercase tracking-wider opacity-80">Maturity Amount</p>
+              <p className="num-display mt-2 text-4xl">{format(result!.total)}</p>
+              <div className="mt-4 grid grid-cols-2 gap-4 border-t border-white/20 pt-3 text-left">
+                <div><p className="text-xs opacity-75">Total Deposit</p><p className="num-display text-lg">{format(numOr(p))}</p></div>
+                <div><p className="text-xs opacity-75">Interest Earned</p><p className="num-display text-lg">{format(result!.interest)}</p></div>
+              </div>
+            </div>
 
-        <button onClick={() => addHistory({ type: "fd", title: "FD Maturity", summary: `Deposit: ${format(p, { decimals: 0 })} • ${r}% • ${t}yr`, value: result.total })}
-          className="primary-gradient w-full rounded-2xl py-4 text-sm font-semibold text-primary-foreground shadow-[var(--shadow-glow)]">
-          Save to History
-        </button>
+            <h2 className="pt-2 text-base font-semibold">Growth Analysis</h2>
+            <Card>
+              <div className="h-48">
+                <ResponsiveContainer>
+                  <PieChart>
+                    <Pie data={data} dataKey="value" innerRadius={48} outerRadius={78} stroke="none">
+                      {data.map((d) => <Cell key={d.name} fill={d.color} />)}
+                    </Pie>
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+            </Card>
+          </>
+        )}
       </div>
     </AppShell>
   );

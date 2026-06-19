@@ -10,7 +10,7 @@ import { useApp } from "@/lib/store";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "FinCalc Pro — Premium Financial Calculators" },
+      { title: "FinCalc — Financial Calculators" },
       { name: "description", content: "EMI, SIP, FD, GST, compound interest and more. Beautifully designed financial calculators." },
     ],
   }),
@@ -52,20 +52,15 @@ function Home() {
 
   return (
     <AppShell>
-      <header className="mb-6 flex items-start justify-between">
-        <div>
-          <p className="section-label">FINCALC</p>
-          <h1 className="text-3xl font-bold tracking-tight">Premium Suite</h1>
-        </div>
-        <div className="flex items-center gap-2">
-          <CurrencySwitcher />
-          <Link
-            to="/settings"
-            className="inline-flex size-11 items-center justify-center rounded-full bg-surface text-foreground hover:bg-surface-2"
-          >
-            <User className="size-5" />
-          </Link>
-        </div>
+      <header className="mb-6 flex items-center justify-end gap-2">
+        <CurrencySwitcher />
+        <Link
+          to="/settings"
+          className="inline-flex size-11 items-center justify-center rounded-full bg-surface text-foreground hover:bg-surface-2"
+          aria-label="Settings"
+        >
+          <User className="size-5" />
+        </Link>
       </header>
 
       <div className="hero-gradient relative mb-8 overflow-hidden rounded-3xl p-5 shadow-[var(--shadow-glow)]">
